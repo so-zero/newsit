@@ -1,50 +1,97 @@
-import { Checkbox, Label, TextInput } from "flowbite-react";
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Alert, Checkbox, Label, Spinner, TextInput } from "flowbite-react";
 
 export default function Register() {
+  const [data, setData] = useState({
+    email: "",
+    name: "",
+    password: "",
+    password2: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setData({ ...data, [name]: value.trim() });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const URL = `${import.meta.env.VITE_BACKEND_URL}/auth/register`;
+
+    try {
+      const response = await axios.post(URL, data);
+      await response.data;
+      navigate("/login");
+      setLoading(false);
+    } catch (error) {
+      setError(error.response.data.message);
+      setLoading(false);
+    }
+  };
   return (
     <div className="mt-20 px-3 flex flex-col max-w-screen-sm mx-auto">
       <h1 className="font-title uppercase text-5xl text-center">Newsit</h1>
-      <form className="flex flex-col gap-4 mt-10 px-10">
+      {error && (
+        <Alert className="mt-10 mx-10" color="failure">
+          {error}
+        </Alert>
+      )}
+      <form className="flex flex-col gap-4 mt-10 px-10" onSubmit={handleSubmit}>
         <div>
           <TextInput
+            name="email"
             type="text"
+            value={data.email}
             placeholder="이메일"
-            id="email"
             color="base"
             sizing="lg"
             required
+            onChange={handleChange}
           />
         </div>
         <div>
           <TextInput
+            name="name"
             type="text"
+            value={data.name}
             placeholder="이름"
-            id="name"
             color="base"
             sizing="lg"
             required
+            onChange={handleChange}
           />
         </div>
         <div>
           <TextInput
+            name="password"
             type="password"
+            value={data.password}
             placeholder="비밀번호"
-            id="password"
             color="base"
             sizing="lg"
             required
+            onChange={handleChange}
           />
         </div>
         <div>
           <TextInput
+            name="password2"
             type="password"
+            value={data.password2}
             placeholder="비밀번호 확인"
-            id="password2"
             color="base"
             sizing="lg"
             required
+            onChange={handleChange}
           />
         </div>
         <div className="flex items-center gap-2">
@@ -54,19 +101,30 @@ export default function Register() {
           </Label>
         </div>
         <div className="flex items-center gap-2">
-          <Checkbox id="agree" color="dark" className="hover:cursor-pointer" />
-          <Label htmlFor="agree" className="flex">
+          <Checkbox id="agree2" color="dark" className="hover:cursor-pointer" />
+          <Label htmlFor="agree2" className="flex">
             이용약관 동의
           </Label>
         </div>
         <div className="flex items-center gap-2">
-          <Checkbox id="agree" color="dark" className="hover:cursor-pointer" />
-          <Label htmlFor="agree" className="flex">
+          <Checkbox id="agree3" color="dark" className="hover:cursor-pointer" />
+          <Label htmlFor="agree3" className="flex">
             개인정보 수집/이용 동의
           </Label>
         </div>
-        <button className="my-5 bg-black text-white w-full py-3 rounded-md transition hover:-translate-y-2 hover:shadow-[5px_5px_0px_0px_rgba(100,100,100)]">
-          가입하기
+        <button
+          type="submit"
+          disabled={loading}
+          className="my-5 bg-black text-white w-full py-3 rounded-md transition hover:-translate-y-2 hover:shadow-[5px_5px_0px_0px_rgba(100,100,100)]"
+        >
+          {loading ? (
+            <>
+              <Spinner size="sm" />
+              <span className="pl-3">로딩중...</span>
+            </>
+          ) : (
+            "가입하기"
+          )}
         </button>
       </form>
       <div className="flex items-center gap-2 mx-auto text-sm text-gray-500">
