@@ -2,14 +2,20 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TextInput, Alert, Spinner } from "flowbite-react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+} from "../redux/user/userSlice";
 
 export default function Login() {
   const [data, setData] = useState({
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,19 +26,17 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    dispatch(loginStart());
 
     const URL = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
 
     try {
       const response = await axios.post(URL, data);
       await response.data;
+      dispatch(loginSuccess(response.data));
       navigate("/");
-      setLoading(false);
     } catch (error) {
-      setError(error.response.data.message);
-      setLoading(false);
+      dispatch(loginFailure(error.response.data.message));
     }
   };
 
