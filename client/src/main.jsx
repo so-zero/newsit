@@ -13,6 +13,7 @@ import Search from "./pages/Search.jsx";
 import { store, persistor } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,10 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      { path: "/dashboard", element: <Dashboard /> },
+      {
+        path: "/dashboard",
+        element: <PrivateRoute />,
+      },
       { path: "/posts", element: <Posts /> },
     ],
   },
