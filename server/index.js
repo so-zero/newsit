@@ -1,13 +1,19 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./config/connectDB");
+const upload = require("express-fileupload");
 
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
-app.use(express.json());
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(express.json({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(upload());
+app.use("/uploads", express.static(__dirname + "/uploads"));
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
