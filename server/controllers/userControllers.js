@@ -119,7 +119,7 @@ async function deleteUser(req, res, next) {
     return next(new HttpError("이 사용자를 삭제할 권한이 없습니다.", 400));
   }
   try {
-    await User.findByIdAndDelete(req.req.params.userId);
+    await User.findByIdAndDelete(req.params.userId);
     res.status(200).json("사용자가 삭제되었습니다.");
   } catch (error) {
     return next(new HttpError(error));

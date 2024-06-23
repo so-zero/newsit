@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import default_Img from "../assets/avatar.png";
-import { Alert, Spinner, TextInput } from "flowbite-react";
+import { Button, Modal, Alert, Spinner, TextInput } from "flowbite-react";
 import axios from "axios";
 import {
   updateSuccess,
   updateFailure,
   updateStart,
+  deleteFailure,
+  deleteStart,
+  deleteSuccess,
 } from "../redux/user/userSlice";
+import { CiFaceFrown } from "react-icons/ci";
 
 export default function DashProfile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -21,6 +25,7 @@ export default function DashProfile() {
   const [newPassword, setNewPassword] = useState("");
   const [newPassword2, setNewPassword2] = useState("");
   const [isAvatarClick, setIsAvatarClick] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleClick = async () => {
     setIsAvatarClick(false);
@@ -78,6 +83,23 @@ export default function DashProfile() {
       navigate("/");
     } catch (error) {
       dispatch(updateFailure(error.response.data.message));
+    }
+  };
+
+  const handleDelete = async () => {
+    setShowModal(false);
+    const URL = `${import.meta.env.VITE_BACKEND_URL}/user/delete/${
+      currentUser?.id
+    }`;
+    try {
+      dispatch(deleteStart());
+      const response = await axios.delete(URL, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${currentUser.token}` },
+      });
+      dispatch(deleteSuccess(response.data));
+    } catch (error) {
+      dispatch(deleteFailure(error.response.data.message));
     }
   };
 
@@ -180,11 +202,36 @@ export default function DashProfile() {
       <div className="text-gray-600  mt-5 flex justify-between">
         <span
           className="cursor-pointer text-sm hover:text-red-600 transition"
+          onClick={() => setShowModal(true)}
         >
           탈퇴하기
         </span>
         <span className="cursor-pointer text-sm">로그아웃</span>
       </div>
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <CiFaceFrown className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              계정을 삭제하시겠습니까?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={handleDelete}>
+                삭제하기
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                취소하기
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
