@@ -1,21 +1,83 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import avatarImg from "../assets/avatar.png";
+import default_Img from "../assets/avatar.png";
 import { TextInput } from "flowbite-react";
+import axios from "axios";
 
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
+  const [avatar, setAvatar] = useState("");
+  const [isAvatarClick, setIsAvatarClick] = useState(false);
+
+  const handleClick = async () => {
+    setIsAvatarClick(false);
+    const URL = `${import.meta.env.VITE_BACKEND_URL}/user/change-avatar`;
+    try {
+      const postData = new FormData();
+      postData.set("avatar", avatar);
+      const response = await axios.post(URL, postData, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${currentUser.token}` },
+      });
+      setAvatar(response?.data?.avatar);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onErrorImg = (e) => {
+    e.target.src = default_Img;
+  };
+
+  useEffect(() => {
+    const getAvatar = async () => {
+      const URL = `${import.meta.env.VITE_BACKEND_URL}/user/${currentUser.id}`;
+      const response = await axios.get(URL, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${currentUser.token}` },
+      });
+      const { avatar } = response.data;
+      setAvatar(avatar);
+    };
+    getAvatar();
+  }, [currentUser.id, currentUser.token]);
+
   return (
-    <div className="max-w-lg mx-auto p-3 w-full">
+    <div className="max-w-lg mx-auto p-3 w-full relative">
       <h1 className="my-7 text-center font-semibold text-xl">프로필</h1>
-      <form className="flex flex-col gap-4">
-        <div className="w-28 h-28 self-center cursor-pointer ">
+      <div className="relative">
+        <div className="w-28 h-28 flex flex-col justify-center items-center mb-4 mx-auto">
           <img
-            src={currentUser.avatar ? currentUser.avatar : avatarImg}
-            alt="avatar"
-            className=" w-full h-full object-cover rounded-full overflow-hidden bg-white border-4 border-gray-400"
+            src={`${import.meta.env.VITE_ASSETS_URL}/uploads/${avatar} `}
+            className="w-full h-full object-cover rounded-full overflow-hidden bg-white border-4 border-gray-400"
+            onError={onErrorImg}
           />
+          <input
+            type="file"
+            name="avatar"
+            id="avatar"
+            accept="png, jpg, jpeg"
+            onChange={(e) => setAvatar(e.target.files[0])}
+            hidden
+          />
+          <label
+            htmlFor="avatar"
+            onClick={() => setIsAvatarClick(true)}
+            className="bg-black text-white w-fit mx-auto p-1 rounded-md text-sm absolute bottom-0 right-2/4 translate-x-2/4 cursor-pointer"
+          >
+            선택하기
+          </label>
         </div>
+        {isAvatarClick && (
+          <button
+            className="bg-black text-white w-fit mx-auto p-1 rounded-md text-sm absolute bottom-0 right-2/4 translate-x-2/4"
+            onClick={handleClick}
+          >
+            변경하기
+          </button>
+        )}
+      </div>
+      <form className="flex flex-col gap-4">
         <TextInput
           id="name"
           type="text"
