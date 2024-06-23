@@ -1,3 +1,5 @@
+const HttpError = require("../models/errorModel");
+const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const fs = require("fs");
 const path = require("path");
@@ -21,7 +23,7 @@ async function userProfile(req, res, next) {
 async function changeAvatar(req, res, next) {
   try {
     if (!req.files.avatar) {
-      return next(new HttpError("이미지를 선택하세요.", 422));
+      return next(new HttpError("이미지를 선택하세요.", 400));
     }
 
     const user = await User.findById(req.user.id);
@@ -52,7 +54,7 @@ async function changeAvatar(req, res, next) {
           { new: true }
         );
         if (!updatedAvatar) {
-          return next(new HttpError("이미지를 변경할 수 없습니다.", 422));
+          return next(new HttpError("이미지를 변경할 수 없습니다.", 400));
         }
         res.status(200).json(updatedAvatar);
       }
@@ -65,7 +67,63 @@ async function changeAvatar(req, res, next) {
 // Update User
 async function updateUser(req, res, next) {
   try {
-  } catch (error) {}
+    const { name, email, currentPassword, newPassword, newPassword2 } =
+      req.body;
+    if (!name || !email || !currentPassword || !newPassword) {
+      return next(new HttpError("모든 필드를 입력해 주세요.", 400));
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return next(new HttpError("유저를 찾을 수 없습니다.", 403));
+    }
+
+    const emailExists = await User.findOne({ email });
+    if (emailExists && emailExists._id != req.user.id) {
+      return next(new HttpError("이메일이 이미 존재합니다.", 400));
+    }
+
+    const validateUserPassword = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+    if (!validateUserPassword) {
+      return next(new HttpError("비밀번호가 일치하지 않습니다.", 400));
+    }
+
+    if (newPassword !== newPassword2) {
+      return next(new HttpError("새로운 비밀번호가 일치하지 않습니다.", 400));
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const HashPassword = await bcrypt.hash(newPassword, salt);
+
+    const newInfo = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        name,
+        email,
+        password: HashPassword,
+      },
+      { new: true }
+    );
+
+    res.status(200).json(newInfo);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
 }
 
-module.exports = { userProfile, updateUser, changeAvatar };
+async function deleteUser(req, res, next) {
+  if (req.user.id !== req.params.userId) {
+    return next(new HttpError("이 사용자를 삭제할 권한이 없습니다.", 400));
+  }
+  try {
+    await User.findByIdAndDelete(req.req.params.userId);
+    res.status(200).json("사용자가 삭제되었습니다.");
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
+module.exports = { userProfile, updateUser, changeAvatar, deleteUser };
