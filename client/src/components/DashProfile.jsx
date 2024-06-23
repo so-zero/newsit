@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import default_Img from "../assets/avatar.png";
-import { TextInput } from "flowbite-react";
+import { Alert, Spinner, TextInput } from "flowbite-react";
 import axios from "axios";
+import {
+  updateSuccess,
+  updateFailure,
+  updateStart,
+} from "../redux/user/userSlice";
 
 export default function DashProfile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [avatar, setAvatar] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newPassword2, setNewPassword2] = useState("");
   const [isAvatarClick, setIsAvatarClick] = useState(false);
 
   const handleClick = async () => {
@@ -36,15 +49,46 @@ export default function DashProfile() {
         withCredentials: true,
         headers: { Authorization: `Bearer ${currentUser.token}` },
       });
-      const { avatar } = response.data;
+      const { name, email, avatar } = response.data;
+      setName(name);
+      setEmail(email);
       setAvatar(avatar);
     };
     getAvatar();
   }, [currentUser.id, currentUser.token]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(updateStart());
+    const URL = `${import.meta.env.VITE_BACKEND_URL}/user/update-user`;
+
+    try {
+      const userData = new FormData();
+      userData.set("name", name);
+      userData.set("email", email);
+      userData.set("currentPassword", currentPassword);
+      userData.set("newPassword", newPassword);
+      userData.set("newPassword2", newPassword2);
+
+      const response = await axios.patch(URL, userData, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${currentUser.token}` },
+      });
+      dispatch(updateSuccess(response.data));
+      navigate("/");
+    } catch (error) {
+      dispatch(updateFailure(error.response.data.message));
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full relative">
       <h1 className="my-7 text-center font-semibold text-xl">프로필</h1>
+      {error && (
+        <Alert className="mb-5" color="failure">
+          {error}
+        </Alert>
+      )}
       <div className="relative">
         <div className="w-28 h-28 flex flex-col justify-center items-center mb-4 mx-auto">
           <img
@@ -77,42 +121,66 @@ export default function DashProfile() {
           </button>
         )}
       </div>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <TextInput
-          id="name"
           type="text"
-          defaultValue={currentUser.name}
+          name="name"
           placeholder="이름"
           color="base"
+          value={currentUser.name}
+          onChange={(e) => setName(e.target.value)}
         />
         <TextInput
-          id="email"
-          type="email"
-          defaultValue={currentUser.email}
+          type="text"
+          name="email"
           placeholder="이메일"
           color="base"
+          value={currentUser.email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <TextInput
-          id="password"
           type="password"
-          placeholder="비밀번호"
+          name="currentPassword"
+          placeholder="기존 비밀번호"
           color="base"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
         />
         <TextInput
-          id="password2"
           type="password"
+          name="NewPassword"
+          placeholder="새로운 비밀번호"
+          color="base"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
+        <TextInput
+          type="password"
+          name="password2"
           placeholder="비밀번호 확인"
           color="base"
+          value={newPassword2}
+          onChange={(e) => setNewPassword2(e.target.value)}
         />
         <button
           type="submit"
+          disabled={loading}
           className=" bg-black text-white w-full py-3 rounded-md transition hover:-translate-y-2 hover:shadow-[5px_5px_0px_0px_rgba(100,100,100)]"
         >
-          업데이트
+          {loading ? (
+            <>
+              <Spinner size="sm" />
+              <span className="pl-3">로딩중...</span>
+            </>
+          ) : (
+            "업데이트"
+          )}
         </button>
       </form>
       <div className="text-gray-600  mt-5 flex justify-between">
-        <span className="cursor-pointer text-sm hover:text-red-600 transition">
+        <span
+          className="cursor-pointer text-sm hover:text-red-600 transition"
+        >
           탈퇴하기
         </span>
         <span className="cursor-pointer text-sm">로그아웃</span>
