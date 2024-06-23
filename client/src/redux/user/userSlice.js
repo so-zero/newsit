@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { PURGE } from "redux-persist";
 
 const initialState = {
   currentUser: null,
@@ -48,6 +49,9 @@ const userSlice = createSlice({
     deleteFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    },
+    extraReducers: (builder) => {
+      builder.addCase(PURGE, () => initialState);
     },
   },
 });

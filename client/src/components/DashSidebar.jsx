@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Sidebar } from "flowbite-react";
 import { HiArrowSmRight, HiUser } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
+import { persistor } from "../redux/store";
 
 export default function DashSidebar() {
   const location = useLocation();
@@ -14,6 +15,12 @@ export default function DashSidebar() {
       setTab(tabUrl);
     }
   }, [location.search]);
+
+  const purge = async () => {
+    window.location.reload();
+    await persistor.purge();
+  };
+
   return (
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
@@ -30,7 +37,7 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
           <Sidebar.Item icon={HiArrowSmRight} className="cursor-pointer">
-            로그아웃
+            <span onClick={async () => purge()}>로그아웃</span>
           </Sidebar.Item>
         </Sidebar.ItemGroup>
       </Sidebar.Items>

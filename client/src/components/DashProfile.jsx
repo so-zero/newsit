@@ -13,6 +13,7 @@ import {
   deleteSuccess,
 } from "../redux/user/userSlice";
 import { CiFaceFrown } from "react-icons/ci";
+import { persistor } from "../redux/store";
 
 export default function DashProfile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -80,7 +81,7 @@ export default function DashProfile() {
         headers: { Authorization: `Bearer ${currentUser.token}` },
       });
       dispatch(updateSuccess(response.data));
-      navigate("/");
+      navigate("/logout");
     } catch (error) {
       dispatch(updateFailure(error.response.data.message));
     }
@@ -101,6 +102,11 @@ export default function DashProfile() {
     } catch (error) {
       dispatch(deleteFailure(error.response.data.message));
     }
+  };
+
+  const purge = async () => {
+    location.reload();
+    await persistor.purge();
   };
 
   return (
@@ -206,7 +212,9 @@ export default function DashProfile() {
         >
           탈퇴하기
         </span>
-        <span className="cursor-pointer text-sm">로그아웃</span>
+        <span className="cursor-pointer text-sm" onClick={async () => purge()}>
+          로그아웃
+        </span>
       </div>
       <Modal
         show={showModal}
