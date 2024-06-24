@@ -41,6 +41,7 @@ async function register(req, res, next) {
   }
 }
 
+// Login
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
@@ -62,11 +63,15 @@ async function login(req, res, next) {
     }
 
     const { _id: id, name, isAdmin } = user;
-    const token = jwt.sign({ id, name, isAdmin }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id, name, email, isAdmin },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
-    res.status(200).json({ token, id, name });
+    res.status(200).json({ token, id, name, email, isAdmin });
   } catch (error) {
     return next(
       new HttpError("로그인에 실패했습니다. 계정을 다시 확인해 주세요.", 400)
