@@ -7,20 +7,42 @@ import { Table } from "flowbite-react";
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
   const [posts, setPosts] = useState([]);
+  const [showMore, setShowMore] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const URL = `${import.meta.env.VITE_BACKEND_URL}/post`;
+      const URL = `${import.meta.env.VITE_BACKEND_URL}/post?userId=${
+        currentUser._id
+      }`;
 
       try {
         const response = await axios.get(URL);
         setPosts(response?.data);
+        if (response.data.length < 9) {
+          setShowMore(false);
+        }
       } catch (error) {
         console.log(error);
       }
     };
     fetchPosts();
-  }, []);
+  }, [currentUser._id]);
+
+  const handleShowMore = async () => {
+    const startIndex = posts.length;
+    const URL = `${import.meta.env.VITE_BACKEND_URL}/post?userId=${
+      currentUser._id
+    }&startIndex=${startIndex}`;
+    try {
+      const response = await axios.get(URL);
+      setPosts((prev) => [...prev, ...response.data]);
+      if (response.data.length < 9) {
+        setShowMore(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <section className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300">
@@ -80,6 +102,14 @@ export default function DashPosts() {
               </Table.Body>
             ))}
           </Table>
+          {showMore && (
+            <button
+              onClick={handleShowMore}
+              className="w-full self-center text-sm py-7"
+            >
+              더보기
+            </button>
+          )}
         </>
       ) : (
         <p>NEWSIT에 대한 글을 작성하세요!</p>
