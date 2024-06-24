@@ -5,7 +5,6 @@ import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage.jsx";
 import Home from "./pages/Home.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
 import Posts from "./pages/Posts.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
@@ -14,6 +13,8 @@ import { store, persistor } from "./redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import PrivateRoute from "./components/PrivateRoute.jsx";
+import CreatePost from "./pages/CreatePost.jsx";
+import AdminPrivateRoute from "./components/AdminPrivateRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
         element: <PrivateRoute />,
       },
       { path: "/posts", element: <Posts /> },
+      {
+        element: <AdminPrivateRoute />,
+        children: [{ path: "/create-post", element: <CreatePost /> }],
+      },
     ],
   },
   { path: "/register", element: <Register /> },

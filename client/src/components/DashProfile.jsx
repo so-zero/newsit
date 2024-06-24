@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import default_Img from "../assets/avatar.png";
 import { Button, Modal, Alert, Spinner, TextInput } from "flowbite-react";
@@ -204,14 +204,26 @@ export default function DashProfile() {
             "업데이트"
           )}
         </button>
+        {currentUser.isAdmin && (
+          <Link to="/create-post">
+            <button
+              type="button"
+              className=" text-black border border-black w-full py-3 rounded-md transition hover:bg-black hover:text-white"
+            >
+              News 작성하기
+            </button>
+          </Link>
+        )}
       </form>
       <div className="text-gray-600  mt-5 flex justify-between">
-        <span
-          className="cursor-pointer text-sm hover:text-red-600 transition"
-          onClick={() => setShowModal(true)}
-        >
-          탈퇴하기
-        </span>
+        {currentUser.isAdmin || (
+          <span
+            className="cursor-pointer text-sm hover:text-red-600 transition"
+            onClick={() => setShowModal(true)}
+          >
+            탈퇴하기
+          </span>
+        )}
         <span className="cursor-pointer text-sm" onClick={async () => purge()}>
           로그아웃
         </span>
