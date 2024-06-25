@@ -81,4 +81,32 @@ async function getPosts(req, res, next) {
   }
 }
 
-module.exports = { createPost, getPosts };
+async function deletePost(req, res, next) {
+  try {
+    if (!req.user.isAdmin) {
+      return next(new HttpError("게시글을 삭제할 수 없습니다.", 403));
+    }
+
+    const post = await Post.findById(req.params.postId);
+    const fileName = post?.thumbnail;
+
+    if (req.user.isAdmin) {
+      fs.unlink(
+        path.join(__dirname, "..", "uploads", fileName),
+        async (err) => {
+          if (err) {
+            return next(new HttpError(err));
+          } else {
+            await Post.findByIdAndDelete(req.params.postId);
+          }
+        }
+      );
+    } else {
+      return next(new HttpError("게시글을 삭제할 수 없습니다.", 403));
+    }
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
+module.exports = { createPost, getPosts, deletePost };
