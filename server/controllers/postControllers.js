@@ -1,5 +1,6 @@
 const HttpError = require("../models/errorModel");
 const Post = require("../models/postModel");
+const User = require("../models/userModel");
 const path = require("path");
 const fs = require("fs");
 const { v4: uuid } = require("uuid");
@@ -36,11 +37,15 @@ async function createPost(req, res, next) {
             content,
             slug,
             thumbnail: newFilename,
-            userId: req.user.id,
+            creator: req.user.id,
           });
           if (!newPost) {
             return next(new HttpError("게시글을 생성할 수 없습니다.", 400));
           }
+
+          const currentUser = await User.findById(req.user.id);
+          const userPostCount = currentUser.posts + 1;
+          await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
           res.status(201).json(newPost);
         }
       }
@@ -50,6 +55,7 @@ async function createPost(req, res, next) {
   }
 }
 
+// Get All Post
 async function getPosts(req, res, next) {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
@@ -81,23 +87,43 @@ async function getPosts(req, res, next) {
   }
 }
 
+// Get Single Post
+async function getPost(req, res, next) {
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(new HttpError("게시글을 찾을 수 없습니다.", 400));
+    }
+    res.status(200).json(post);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
+// Delete Post
 async function deletePost(req, res, next) {
   try {
-    if (!req.user.isAdmin) {
-      return next(new HttpError("게시글을 삭제할 수 없습니다.", 403));
+    const postId = req.params.id;
+    if (!postId) {
+      return next(new HttpError("게시글이 없습니다.", 400));
     }
-
-    const post = await Post.findById(req.params.postId);
+    const post = await Post.findById(postId);
     const fileName = post?.thumbnail;
 
-    if (req.user.isAdmin) {
+    if (req.user.id == post.creator) {
       fs.unlink(
         path.join(__dirname, "..", "uploads", fileName),
         async (err) => {
           if (err) {
             return next(new HttpError(err));
           } else {
-            await Post.findByIdAndDelete(req.params.postId);
+            await Post.findByIdAndDelete(postId);
+
+            const currentUser = await User.findById(req.user.id);
+            const userPostCount = currentUser?.posts - 1;
+            await User.findByIdAndUpdate(req.user.id, { posts: userPostCount });
+            res.json("게시글이 삭제되었습니다.");
           }
         }
       );
@@ -109,4 +135,75 @@ async function deletePost(req, res, next) {
   }
 }
 
-module.exports = { createPost, getPosts, deletePost };
+// Edit Post
+async function editPost(req, res, next) {
+  try {
+    let fileName;
+    let newFilename;
+    let updatedPost;
+
+    const postId = req.params.id;
+    let { title, category, content } = req.body;
+
+    if (!title || !category || content.length < 10) {
+      return next(new HttpError("모든 필드를 입력해 주세요.", 422));
+    }
+
+    const prevPost = await Post.findById(postId);
+    if (req.user.id == prevPost.creator) {
+      if (!req.files) {
+        updatedPost = await Post.findByIdAndUpdate(
+          postId,
+          {
+            title,
+            category,
+            content,
+          },
+          { new: true }
+        );
+      } else {
+        fs.unlink(
+          path.join(__dirname, "..", "uploads", prevPost.thumbnail),
+          async (err) => {
+            if (err) {
+              return next(new HttpError(err));
+            }
+          }
+        );
+        const { thumbnail } = req.files;
+        fileName = thumbnail.name;
+        let splitted = fileName.split(".");
+        newFilename =
+          splitted[0] + uuid() + "." + splitted[splitted.length - 1];
+        thumbnail.mv(
+          path.join(__dirname, "..", "uploads", newFilename),
+          async (err) => {
+            if (err) {
+              return next(new HttpError(err));
+            }
+          }
+        );
+
+        updatedPost = await Post.findByIdAndUpdate(
+          postId,
+          {
+            title,
+            category,
+            content,
+            thumbnail: newFilename,
+          },
+          { new: true }
+        );
+      }
+    }
+    if (!updatedPost) {
+      return next(new HttpError("게시글을 수정할 수 없습니다.", 400));
+    }
+
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
+module.exports = { createPost, getPosts, getPost, deletePost, editPost };
