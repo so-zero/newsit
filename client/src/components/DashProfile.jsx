@@ -81,7 +81,6 @@ export default function DashProfile() {
         headers: { Authorization: `Bearer ${currentUser.token}` },
       });
       dispatch(updateSuccess(response.data));
-      navigate("/logout");
     } catch (error) {
       dispatch(updateFailure(error.response.data.message));
     }
