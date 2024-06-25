@@ -4,6 +4,7 @@ const {
   changeAvatar,
   updateUser,
   deleteUser,
+  getUsers,
 } = require("../controllers/userControllers");
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -13,5 +14,6 @@ router.get("/:id", userProfile);
 router.post("/change-avatar", authMiddleware, changeAvatar);
 router.patch("/update-user", authMiddleware, updateUser);
 router.delete("/delete/:userId", authMiddleware, deleteUser);
+router.get("/", authMiddleware, getUsers);
 
 module.exports = router;
