@@ -56,10 +56,10 @@ export default function DashPosts() {
         headers: { Authorization: `Bearer ${currentUser.token}` },
       });
 
-      if (!response.data.success) {
-        console.log(response.data.message);
-      } else {
+      if (response.status === 200) {
         setPosts((prev) => prev.filter((post) => post._id !== postDelete));
+      } else {
+        console.log(response.data.message);
       }
     } catch (error) {
       console.log(error);
