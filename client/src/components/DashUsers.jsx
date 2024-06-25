@@ -49,7 +49,24 @@ export default function DashUsers() {
     e.target.src = default_Img;
   };
 
-  const handleDeleteUser = async () => {};
+  const handleDeleteUser = async () => {
+    setShowModal(false);
+    const URL = `${import.meta.env.VITE_BACKEND_URL}/user/delete/${userDelete}`;
+    try {
+      const response = await axios.delete(URL, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${currentUser.token}` },
+      });
+
+      if (response.status === 200) {
+        setUsers((prev) => prev.filter((user) => user._id !== userDelete));
+      } else {
+        console.log(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <section className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300">

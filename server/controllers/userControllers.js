@@ -114,8 +114,9 @@ async function updateUser(req, res, next) {
   }
 }
 
+// Delete User
 async function deleteUser(req, res, next) {
-  if (req.user.id !== req.params.userId) {
+  if (!req.user.isAdmin && req.user.id !== req.params.userId) {
     return next(new HttpError("이 사용자를 삭제할 권한이 없습니다.", 400));
   }
   try {
@@ -126,6 +127,7 @@ async function deleteUser(req, res, next) {
   }
 }
 
+// Get All Users
 async function getUsers(req, res, next) {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
