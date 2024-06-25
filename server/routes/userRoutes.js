@@ -14,6 +14,6 @@ router.get("/:id", userProfile);
 router.post("/change-avatar", authMiddleware, changeAvatar);
 router.patch("/update-user", authMiddleware, updateUser);
 router.delete("/delete/:userId", authMiddleware, deleteUser);
-router.get("/", authMiddleware, getUsers);
+router.get("/", getUsers);
 
 module.exports = router;

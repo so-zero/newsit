@@ -127,16 +127,13 @@ async function deleteUser(req, res, next) {
 }
 
 async function getUsers(req, res, next) {
-  if (!req.user.isAdmin) {
-    return next(new HttpError("사용자를 확인할 수 없습니다.", 400));
-  }
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
     const sortDirection = req.query.sort === "asc" ? 1 : -1;
 
     const users = await User.find()
-      .sort({ updateAt: sortDirection })
+      .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
 
