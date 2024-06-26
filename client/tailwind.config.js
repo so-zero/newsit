@@ -13,6 +13,9 @@ export default {
         background: "#fff",
         primary: "#fff",
       },
+      lineHeight: {
+        12: "3rem",
+      },
     },
   },
   plugins: [flowbite.plugin(), require("tailwind-scrollbar")],
