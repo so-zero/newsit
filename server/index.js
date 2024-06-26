@@ -7,6 +7,7 @@ const upload = require("express-fileupload");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -19,6 +20,7 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
+app.use("/api/comment", commentRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
