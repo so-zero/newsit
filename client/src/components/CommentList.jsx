@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import default_Img from "../assets/avatar.png";
 import axios from "axios";
 import { Alert, Textarea } from "flowbite-react";
+import Comment from "./Comment";
 
 export default function CommentList({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
   const [avatar, setAvatar] = useState("");
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     if (currentUser) {
@@ -47,11 +49,25 @@ export default function CommentList({ postId }) {
         withCredentials: true,
         headers: { Authorization: `Bearer ${currentUser.token}` },
       });
-      setComment(response.data);
+      setComment("");
+      setComments([response.data, ...comments]);
     } catch (error) {
       setError(error.response.data.message);
     }
   };
+
+  useEffect(() => {
+    const getComments = async () => {
+      const URL = `${import.meta.env.VITE_BACKEND_URL}/comment/${postId}`;
+      try {
+        const response = await axios.get(URL);
+        setComments(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getComments();
+  }, [postId]);
 
   return (
     <div className="max-w-3xl mx-auto w-full p-3 text-sm">
@@ -109,6 +125,19 @@ export default function CommentList({ postId }) {
             </Alert>
           )}
         </form>
+      )}
+      {comments.length === 0 ? (
+        <p className="text-sm my-5">댓글이 없습니다.</p>
+      ) : (
+        <>
+          <div className="text-sm my-5 flex items-center">
+            <p className="font-bold">{comments.length}</p>
+            <p>개의 댓글</p>
+          </div>
+          {comments.map((comment) => (
+            <Comment key={comment._id} comment={comment} />
+          ))}
+        </>
       )}
     </div>
   );
