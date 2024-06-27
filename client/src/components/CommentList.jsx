@@ -69,6 +69,14 @@ export default function CommentList({ postId }) {
     getComments();
   }, [postId]);
 
+  const handleEdit = async (comment, editedContent) => {
+    setComments(
+      comments.map((c) =>
+        c._id === comment._id ? { ...c, content: editedContent } : c
+      )
+    );
+  };
+
   return (
     <div className="max-w-3xl mx-auto w-full p-3 text-sm">
       {currentUser ? (
@@ -135,7 +143,7 @@ export default function CommentList({ postId }) {
             <p>개의 댓글</p>
           </div>
           {comments.map((comment) => (
-            <Comment key={comment._id} comment={comment} />
+            <Comment key={comment._id} comment={comment} onEdit={handleEdit} />
           ))}
         </>
       )}

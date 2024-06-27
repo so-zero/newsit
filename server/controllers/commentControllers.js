@@ -35,4 +35,32 @@ async function getComment(req, res, next) {
   }
 }
 
-module.exports = { createComment, getComment };
+// Edit Comment
+async function editComment(req, res, next) {
+  try {
+    const commentId = req.params.id;
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return next(new HttpError("댓글을 찾을 수 없습니다.", 403));
+    }
+
+    if (comment.userId !== req.user.id && !req.user.isAdmin) {
+      return next(new HttpError("이 댓글을 수정할 수 없습니다.", 403));
+    }
+
+    const editedComment = await Comment.findByIdAndUpdate(
+      commentId,
+      {
+        content: req.body.content,
+      },
+      { new: true }
+    );
+
+    res.status(200).json(editedComment);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
+module.exports = { createComment, getComment, editComment };
