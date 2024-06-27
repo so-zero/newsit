@@ -164,10 +164,28 @@ async function getUsers(req, res, next) {
   }
 }
 
+// Get Single Post
+async function getUser(req, res, next) {
+  try {
+    const userId = req.params.id;
+    const user = await Post.findById(userId);
+    if (!user) {
+      return next(new HttpError("유저 정보를 찾을 수 없습니다.", 400));
+    }
+
+    const { password, ...rest } = user._doc;
+
+    res.status(200).json(rest);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
 module.exports = {
   userProfile,
   updateUser,
   changeAvatar,
   deleteUser,
   getUsers,
+  getUser,
 };
