@@ -5,25 +5,11 @@ import default_Img from "../assets/avatar.png";
 import moment from "moment";
 import { Button, Textarea } from "flowbite-react";
 
-export default function Comment({ comment, onEdit }) {
+export default function Comment({ comment, onEdit, onDelete }) {
   const { currentUser } = useSelector((state) => state.user);
-  const [avatar, setAvatar] = useState("");
   const [user, setUser] = useState({});
   const [edit, setEdit] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
-
-  useEffect(() => {
-    if (currentUser) {
-      const getAvatar = async () => {
-        const URL = `${import.meta.env.VITE_BACKEND_URL}/user/${
-          currentUser.id
-        }`;
-        const response = await axios.get(URL);
-        setAvatar(response.data);
-      };
-      getAvatar();
-    }
-  }, [currentUser]);
 
   const onErrorImg = (e) => {
     e.target.src = default_Img;
@@ -69,7 +55,7 @@ export default function Comment({ comment, onEdit }) {
     <div className="flex p-4 border-b text-sm">
       <div className="flex-shrink-0 mr-3">
         <img
-          src={`${import.meta.env.VITE_ASSETS_URL}/uploads/${avatar}`}
+          src={`${import.meta.env.VITE_ASSETS_URL}/uploads/${user.avatar}`}
           alt={user.name}
           onError={onErrorImg}
           className="w-10 h-10 object-cover rounded-full border border-gray-500"
@@ -99,7 +85,7 @@ export default function Comment({ comment, onEdit }) {
               <Button
                 type="button"
                 size="sm"
-                color="dark"
+                color="gray"
                 onClick={() => setEdit(false)}
               >
                 취소
@@ -109,16 +95,25 @@ export default function Comment({ comment, onEdit }) {
         ) : (
           <>
             <p className="text-gray-600 pb-2">{comment.content}</p>
-            <div>
+            <div className="flex gap-2">
               {currentUser &&
                 (currentUser.id === comment.userId || currentUser.isAdmin) && (
-                  <button
-                    type="button"
-                    onClick={handleEdit}
-                    className="text-gray-400 transition hover:text-blue-500 text-xs"
-                  >
-                    수정
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleEdit}
+                      className="text-gray-400 transition hover:text-blue-500 text-xs"
+                    >
+                      수정
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(comment._id)}
+                      className="text-gray-400 transition hover:text-red-500 text-xs"
+                    >
+                      삭제
+                    </button>
+                  </>
                 )}
             </div>
           </>

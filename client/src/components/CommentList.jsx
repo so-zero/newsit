@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import default_Img from "../assets/avatar.png";
 import axios from "axios";
-import { Alert, Textarea } from "flowbite-react";
+import { Alert, Button, Modal, Textarea } from "flowbite-react";
 import Comment from "./Comment";
+import { IoTrashBin } from "react-icons/io5";
 
 export default function CommentList({ postId }) {
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [avatar, setAvatar] = useState("");
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [commentDelete, setCommentDelete] = useState(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -75,6 +79,32 @@ export default function CommentList({ postId }) {
         c._id === comment._id ? { ...c, content: editedContent } : c
       )
     );
+  };
+
+  const handleDelete = async (commentId) => {
+    setShowModal(false);
+    const URL = `${
+      import.meta.env.VITE_BACKEND_URL
+    }/comment/delete/${commentId}`;
+    try {
+      if (!currentUser) {
+        navigate("/login");
+        return;
+      }
+
+      const response = await axios.delete(URL, {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${currentUser.token}` },
+      });
+
+      if (response.status === 200) {
+        setComments(comments.filter((comment) => comment._id !== commentId));
+      } else {
+        console.log(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -143,10 +173,45 @@ export default function CommentList({ postId }) {
             <p>개의 댓글</p>
           </div>
           {comments.map((comment) => (
-            <Comment key={comment._id} comment={comment} onEdit={handleEdit} />
+            <Comment
+              key={comment._id}
+              comment={comment}
+              onEdit={handleEdit}
+              onDelete={(commentId) => {
+                setShowModal(true);
+                setCommentDelete(commentId);
+              }}
+            />
           ))}
         </>
       )}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <IoTrashBin className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              댓글을 삭제하시겠습니까?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                onClick={() => handleDelete(commentDelete)}
+              >
+                삭제하기
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                취소하기
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
