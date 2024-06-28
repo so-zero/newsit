@@ -3,12 +3,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Loading from "../components/Loading";
 import CommentList from "../components/CommentList";
+import PostCard from "../components/PostCard";
 
 export default function PostDetail() {
   const { postSlug } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [latestPosts, setLatestPosts] = useState(null);
 
   useEffect(() => {
     const getPost = async () => {
@@ -25,6 +27,19 @@ export default function PostDetail() {
     };
     getPost();
   }, [postSlug]);
+
+  useEffect(() => {
+    const URL = `${import.meta.env.VITE_BACKEND_URL}/post?limit=3`;
+    try {
+      const getLatestPost = async () => {
+        const response = await axios.get(URL);
+        setLatestPosts(response.data);
+      };
+      getLatestPost();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   if (isLoading) {
     return <Loading />;
@@ -56,6 +71,14 @@ export default function PostDetail() {
         dangerouslySetInnerHTML={{ __html: post?.content }}
       ></div>
       <CommentList postId={post._id} />
+
+      <div className="flex flex-col justify-center items-center mb-5">
+        <h1 className="text-lg mt-5">최신 포스트</h1>
+        <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-5">
+          {latestPosts &&
+            latestPosts.map((post) => <PostCard key={post._id} post={post} />)}
+        </div>
+      </div>
     </main>
   );
 }
