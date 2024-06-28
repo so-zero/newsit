@@ -35,6 +35,38 @@ async function getComment(req, res, next) {
   }
 }
 
+// Get All Comments
+async function getComments(req, res, next) {
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.order === "desc" ? 1 : -1;
+
+    const comments = await Comment.find()
+      .sort({ createdAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
+    const totalComments = await Comment.countDocuments();
+
+    const now = new Date();
+
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    const lastMonthComments = await Comment.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+
+    res.status(200).json(comments, totalComments, lastMonthComments);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
 // Edit Comment
 async function editComment(req, res, next) {
   try {
@@ -84,4 +116,10 @@ async function deleteComment(req, res, next) {
   }
 }
 
-module.exports = { createComment, getComment, editComment, deleteComment };
+module.exports = {
+  createComment,
+  getComment,
+  getComments,
+  editComment,
+  deleteComment,
+};
