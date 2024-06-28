@@ -17,8 +17,8 @@ export default function DashComments() {
 
       try {
         const response = await axios.get(URL);
-        setComments(response.data);
-        if (response.data.length < 9) {
+        setComments(response.data.comments);
+        if (response.data.comments.length < 9) {
           setShowMore(false);
         }
       } catch (error) {
@@ -35,8 +35,8 @@ export default function DashComments() {
     }/comment?startIndex=${startIndex}`;
     try {
       const response = await axios.get(URL);
-      setComments((prev) => [...prev, ...response.data]);
-      if (response.data.length < 9) {
+      setComments((prev) => [...prev, ...response.data.comments]);
+      if (response.data.comments.length < 9) {
         setShowMore(false);
       }
     } catch (error) {
@@ -80,12 +80,17 @@ export default function DashComments() {
               <Table.HeadCell>삭제</Table.HeadCell>
             </Table.Head>
             {comments.map((comment) => (
-              <Table.Body key={comment._id} className="divide-y">
+              <Table.Body
+                key={comment._id}
+                className="divide-y overflow-hidden whitespace-nowrap"
+              >
                 <Table.Row>
                   <Table.Cell>
                     {new Date(comment.updatedAt).toLocaleDateString()}
                   </Table.Cell>
-                  <Table.Cell>{comment.content}</Table.Cell>
+                  <Table.Cell className="max-w-[150px] flex-grow overflow-hidden text-ellipsis whitespace-nowrap">
+                    {comment.content}
+                  </Table.Cell>
                   <Table.Cell>{comment.postId}</Table.Cell>
                   <Table.Cell>{comment.userId}</Table.Cell>
                   <Table.Cell>

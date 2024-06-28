@@ -82,7 +82,10 @@ export default function DashUsers() {
               <Table.HeadCell>삭제</Table.HeadCell>
             </Table.Head>
             {users.map((user) => (
-              <Table.Body key={user._id} className="divide-y">
+              <Table.Body
+                key={user._id}
+                className="divide-y overflow-hidden whitespace-nowrap"
+              >
                 <Table.Row>
                   <Table.Cell>
                     {new Date(user.createdAt).toLocaleDateString()}
@@ -94,7 +97,7 @@ export default function DashUsers() {
                       }`}
                       alt={user.name}
                       onError={onErrorImg}
-                      className="w-10 h-10 object-cover rounded-full border border-gray-500"
+                      className="max-w-[40px] max-h-[40px]object-cover rounded-full border border-gray-500"
                     />
                   </Table.Cell>
                   <Table.Cell>{user.name}</Table.Cell>

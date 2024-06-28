@@ -19,7 +19,7 @@ export default function PostDetail() {
 
       try {
         const response = await axios.get(URL);
-        setPost(response.data[0]);
+        setPost(response.data.posts[0]);
       } catch (error) {
         setError(error.response.data.message);
       }
@@ -33,7 +33,7 @@ export default function PostDetail() {
     try {
       const getLatestPost = async () => {
         const response = await axios.get(URL);
-        setLatestPosts(response.data);
+        setLatestPosts(response.data.posts);
       };
       getLatestPost();
     } catch (error) {

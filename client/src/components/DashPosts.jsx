@@ -20,8 +20,8 @@ export default function DashPosts() {
 
       try {
         const response = await axios.get(URL);
-        setPosts(response?.data);
-        if (response.data.length < 9) {
+        setPosts(response?.data.posts);
+        if (response.data.posts.length < 9) {
           setShowMore(false);
         }
       } catch (error) {
@@ -38,8 +38,8 @@ export default function DashPosts() {
     }&startIndex=${startIndex}`;
     try {
       const response = await axios.get(URL);
-      setPosts((prev) => [...prev, ...response.data]);
-      if (response.data.length < 9) {
+      setPosts((prev) => [...prev, ...response.data.posts]);
+      if (response.data.posts.length < 9) {
         setShowMore(false);
       }
     } catch (error) {
@@ -82,7 +82,10 @@ export default function DashPosts() {
               </Table.HeadCell>
             </Table.Head>
             {posts.map((post) => (
-              <Table.Body key={post._id} className="divide-y">
+              <Table.Body
+                key={post._id}
+                className="divide-y overflow-hidden whitespace-nowrap"
+              >
                 <Table.Row>
                   <Table.Cell>
                     {new Date(post.updatedAt).toLocaleDateString()}
@@ -94,16 +97,15 @@ export default function DashPosts() {
                           post.thumbnail
                         }`}
                         alt={post.title}
-                        className="w-20 h-10 object-cover"
+                        className="max-w-[100px] max-h-[50px] object-cover "
                       />
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
-                    <Link
-                      to={`/post/${post.slug}`}
-                      className="font-medium text-black"
-                    >
-                      {post.title}
+                    <Link to={`/post/${post.slug}`}>
+                      <p className="font-medium text-black max-w-[150px] flex-grow overflow-hidden text-ellipsis whitespace-nowrap">
+                        {post.title}
+                      </p>
                     </Link>
                   </Table.Cell>
                   <Table.Cell>{post.category}</Table.Cell>
