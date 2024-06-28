@@ -4,6 +4,7 @@ import { HiArrowSmRight, HiUser, HiUserGroup } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { persistor } from "../redux/store";
 import { IoDocumentText } from "react-icons/io5";
+import { BiSolidCommentDetail } from "react-icons/bi";
 import { useSelector } from "react-redux";
 
 export default function DashSidebar() {
@@ -40,26 +41,35 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
           {currentUser.isAdmin && (
-            <Link to="/dashboard?tab=posts">
-              <Sidebar.Item
-                active={tab === "posts"}
-                icon={IoDocumentText}
-                as="div"
-              >
-                글 목록
-              </Sidebar.Item>
-            </Link>
-          )}
-          {currentUser.isAdmin && (
-            <Link to="/dashboard?tab=users">
-              <Sidebar.Item
-                active={tab === "users"}
-                icon={HiUserGroup }
-                as="div"
-              >
-                유저 목록
-              </Sidebar.Item>
-            </Link>
+            <>
+              <Link to="/dashboard?tab=posts">
+                <Sidebar.Item
+                  active={tab === "posts"}
+                  icon={IoDocumentText}
+                  as="div"
+                >
+                  글 목록
+                </Sidebar.Item>
+              </Link>
+              <Link to="/dashboard?tab=users">
+                <Sidebar.Item
+                  active={tab === "users"}
+                  icon={HiUserGroup}
+                  as="div"
+                >
+                  유저 목록
+                </Sidebar.Item>
+              </Link>
+              <Link to="/dashboard?tab=comments">
+                <Sidebar.Item
+                  active={tab === "comments"}
+                  icon={BiSolidCommentDetail}
+                  as="div"
+                >
+                  댓글 목록
+                </Sidebar.Item>
+              </Link>
+            </>
           )}
           <Sidebar.Item icon={HiArrowSmRight} className="cursor-pointer">
             <span onClick={async () => purge()}>로그아웃</span>
