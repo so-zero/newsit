@@ -3,7 +3,7 @@ import { Sidebar } from "flowbite-react";
 import { HiArrowSmRight, HiUser, HiUserGroup } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { persistor } from "../redux/store";
-import { IoDocumentText } from "react-icons/io5";
+import { IoDocumentText, IoStatsChart } from "react-icons/io5";
 import { BiSolidCommentDetail } from "react-icons/bi";
 import { useSelector } from "react-redux";
 
@@ -29,6 +29,17 @@ export default function DashSidebar() {
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup className="flex flex-col gap-1">
+          {currentUser.isAdmin && (
+            <Link to="/dashboard?tab=dash">
+              <Sidebar.Item
+                active={tab === "dash" || !tab}
+                icon={IoStatsChart}
+                as="div"
+              >
+                대시보드
+              </Sidebar.Item>
+            </Link>
+          )}
           <Link to="/dashboard?tab=profile">
             <Sidebar.Item
               active={tab === "profile"}
@@ -42,15 +53,6 @@ export default function DashSidebar() {
           </Link>
           {currentUser.isAdmin && (
             <>
-              <Link to="/dashboard?tab=posts">
-                <Sidebar.Item
-                  active={tab === "posts"}
-                  icon={IoDocumentText}
-                  as="div"
-                >
-                  글 목록
-                </Sidebar.Item>
-              </Link>
               <Link to="/dashboard?tab=users">
                 <Sidebar.Item
                   active={tab === "users"}
@@ -58,6 +60,15 @@ export default function DashSidebar() {
                   as="div"
                 >
                   유저 목록
+                </Sidebar.Item>
+              </Link>
+              <Link to="/dashboard?tab=posts">
+                <Sidebar.Item
+                  active={tab === "posts"}
+                  icon={IoDocumentText}
+                  as="div"
+                >
+                  글 목록
                 </Sidebar.Item>
               </Link>
               <Link to="/dashboard?tab=comments">
