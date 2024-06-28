@@ -73,7 +73,7 @@ async function getPosts(req, res, next) {
         ],
       }),
     })
-      .sort({ updateAt: sortDirection })
+      .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
 
@@ -91,7 +91,7 @@ async function getPosts(req, res, next) {
       createdAt: { $gte: oneMonthAgo },
     });
 
-    res.status(200).json(posts, totalPosts, lastMonthPosts);
+    res.status(200).json({ posts, totalPosts, lastMonthPosts });
   } catch (error) {
     return next(new HttpError(error));
   }

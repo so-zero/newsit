@@ -61,7 +61,7 @@ async function getComments(req, res, next) {
       createdAt: { $gte: oneMonthAgo },
     });
 
-    res.status(200).json(comments, totalComments, lastMonthComments);
+    res.status(200).json({ comments, totalComments, lastMonthComments });
   } catch (error) {
     return next(new HttpError(error));
   }
