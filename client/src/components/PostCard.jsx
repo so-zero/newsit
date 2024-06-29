@@ -18,7 +18,7 @@ export default function PostCard({ post }) {
           </p>
           <div className="flex justify-between items-center text-sm">
             <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-            <span>{post.category}</span>
+            <span className="uppercase">{post.category}</span>
           </div>
         </div>
       </Link>

@@ -50,7 +50,7 @@ export default function PostDetail() {
         to={`/category?category=${post?.category}`}
         className="mt-8 mb-5 text-center"
       >
-        <p className="text-lg">{post?.category}</p>
+        <p className="text-lg uppercase">{post?.category}</p>
       </Link>
       <h1 className="text-3xl p-3 text-center max-w-3xl mx-auto lg:text-4xl lineHeight-12">
         {post?.title}
