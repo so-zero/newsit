@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar, Dropdown } from "flowbite-react";
-import { Link } from "react-router-dom";
-import { LuSearch, LuUser2 } from "react-icons/lu";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LuUser2, LuSearch } from "react-icons/lu";
 import { useSelector } from "react-redux";
 import { persistor } from "../redux/store";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [keyword, setKeyword] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchUrl = urlParams.get("keyword");
+
+    if (searchUrl) {
+      setKeyword(searchUrl);
+      setKeyword("");
+    }
+  }, [location.search]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("keyword", keyword);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
 
   const purge = async () => {
     window.location.reload();
@@ -21,12 +42,19 @@ export default function Header() {
         </h1>
       </Link>
       <div className="flex items-center cursor-pointer">
-        <div className="w-12 h-12 lg:w-14 lg:h-14 border border-black flex items-center justify-center border-r-0">
-          <Link to="/search">
-            <LuSearch size={20} />
-          </Link>
-        </div>
-        <div className="w-12 h-12 lg:w-14 lg:h-14 border border-black flex items-center justify-center">
+        <form onSubmit={handleSubmit}>
+          <div className="relative flex items-center">
+            <LuSearch className="w-5 h-5 absolute ml-3" />
+            <input
+              type="text"
+              className="w-[84px] h-12 md:w-32 lg:w-50 lg:h-14 border border-black pr-3 pl-10 focus:ring-0"
+              placeholder="검색하기"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+            />
+          </div>
+        </form>
+        <div className="w-12 h-12 lg:w-14 lg:h-14 border border-black border-l-0 flex items-center justify-center">
           {currentUser ? (
             <Dropdown arrowIcon={false} inline label={<LuUser2 size={20} />}>
               <Dropdown.Header>
