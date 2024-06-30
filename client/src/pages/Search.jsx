@@ -166,9 +166,9 @@ export default function Search() {
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-5 md:px-6 md:py-8 lg:px-8 lg:py-10">
           {!loading && posts.length === 0 && (
-            <p className="text-xl text-gray-500">No posts found.</p>
+            <p className="text-xl text-gray-500">게시글을 찾을 수 없습니다.</p>
           )}
-          {loading && <p className="text-center">loading..</p>}
+          {loading && <p className="text-xl text-gray-500">🐻 로딩중...</p>}
           {!loading &&
             posts &&
             posts.map((post) => <PostCard key={post._id} post={post} />)}
