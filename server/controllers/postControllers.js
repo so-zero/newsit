@@ -111,6 +111,19 @@ async function getPost(req, res, next) {
   }
 }
 
+// =============
+// Get Post Category
+// =============
+async function categoryPost(req, res, next) {
+  try {
+    const { category } = req.params;
+    const catPost = await Post.find({ category }).sort({ createdAt: -1 });
+    res.status(200).json(catPost);
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
 // Delete Post
 async function deletePost(req, res, next) {
   try {
@@ -216,4 +229,11 @@ async function editPost(req, res, next) {
   }
 }
 
-module.exports = { createPost, getPosts, getPost, deletePost, editPost };
+module.exports = {
+  createPost,
+  getPosts,
+  getPost,
+  categoryPost,
+  deletePost,
+  editPost,
+};
