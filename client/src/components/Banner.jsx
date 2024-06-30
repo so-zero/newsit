@@ -15,7 +15,7 @@ export default function Banner() {
         <form className="flex max-w-md flex-col gap-4 mt-6">
           <div>
             <TextInput
-              id="base"
+              id="email"
               type="email"
               sizing="lg"
               placeholder="이메일 주소"
