@@ -13,6 +13,7 @@ import AdminPrivateRoute from "./components/AdminPrivateRoute";
 import CreatePost from "./pages/CreatePost";
 import UpdatePost from "./pages/UpdatePost";
 import PostDetail from "./pages/PostDetail";
+import CategoryPost from "./pages/CategoryPost";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/update-post/:id" element={<UpdatePost />} />
         </Route>
         <Route path="/post/:postSlug" element={<PostDetail />} />
+        <Route path="/post/categories/:category" element={<CategoryPost />} />
       </Routes>
       <Footer />
     </BrowserRouter>

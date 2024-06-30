@@ -47,7 +47,7 @@ export default function PostDetail() {
   return (
     <main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen">
       <Link
-        to={`/category?category=${post?.category}`}
+        to={`/post/categories/${post?.category}`}
         className="mt-8 mb-5 text-center"
       >
         <p className="text-lg uppercase">{post?.category}</p>
