@@ -41,7 +41,7 @@ export default function Login() {
   };
 
   return (
-    <div className="mt-20 px-3 flex flex-col max-w-screen-sm mx-auto">
+    <div className="mt-20 px-3 flex flex-col max-w-screen-sm mx-auto min-h-[500px]">
       <h1 className="font-title uppercase text-5xl text-center">Newsit</h1>
       {error && (
         <Alert className="mt-10 mx-10" color="failure">

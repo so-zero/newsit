@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Alert, Checkbox, Label, Spinner, TextInput } from "flowbite-react";
+import Checkbox from "../components/Checkbox";
+import { Alert, Spinner, TextInput } from "flowbite-react";
 
 export default function Register() {
   const [data, setData] = useState({
@@ -10,9 +11,11 @@ export default function Register() {
     password: "",
     password2: "",
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [service, setService] = useState(false);
+  const [marketing, setMarketing] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +26,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError(null);
 
     const URL = `${import.meta.env.VITE_BACKEND_URL}/auth/register`;
 
@@ -38,7 +41,7 @@ export default function Register() {
     }
   };
   return (
-    <div className="mt-20 px-3 flex flex-col max-w-screen-sm mx-auto">
+    <div className="mt-20 px-3 flex flex-col max-w-screen-sm mx-auto min-h-[700px]">
       <h1 className="font-title uppercase text-5xl text-center">Newsit</h1>
       {error && (
         <Alert className="mt-10 mx-10" color="failure">
@@ -94,27 +97,17 @@ export default function Register() {
             onChange={handleChange}
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Checkbox id="agree" color="dark" className="hover:cursor-pointer" />
-          <Label htmlFor="agree" className="flex">
-            만 14세 이상 가입 동의
-          </Label>
-        </div>
-        <div className="flex items-center gap-2">
-          <Checkbox id="agree2" color="dark" className="hover:cursor-pointer" />
-          <Label htmlFor="agree2" className="flex">
-            이용약관 동의
-          </Label>
-        </div>
-        <div className="flex items-center gap-2">
-          <Checkbox id="agree3" color="dark" className="hover:cursor-pointer" />
-          <Label htmlFor="agree3" className="flex">
-            개인정보 수집/이용 동의
-          </Label>
+        <div className="flex flex-col items-start gap-4 mt-4">
+          <Checkbox checked={service} onChange={setService}>
+            만 14세 이상 가입 동의합니다. (필수)
+          </Checkbox>
+          <Checkbox checked={marketing} onChange={setMarketing}>
+            마케팅 정보 수신에 동의합니다. (선택)
+          </Checkbox>
         </div>
         <button
           type="submit"
-          disabled={loading}
+          disabled={!service || loading}
           className="my-5 bg-black text-white w-full py-3 rounded-md transition hover:-translate-y-2 hover:shadow-[5px_5px_0px_0px_rgba(100,100,100)]"
         >
           {loading ? (
