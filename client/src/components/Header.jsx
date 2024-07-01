@@ -47,14 +47,14 @@ export default function Header() {
             <LuSearch className="w-5 h-5 absolute ml-3" />
             <input
               type="text"
-              className="w-[84px] h-12 md:w-32 lg:w-50 lg:h-14 border border-black pr-3 pl-10 focus:ring-0"
+              className="w-[84px] h-12 md:w-32 lg:w-[280px] lg:h-14 border border-black pr-3 pl-10 focus:outline-none focus:ring-black focus:ring-1 focus:border-0"
               placeholder="검색하기"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
           </div>
         </form>
-        <div className="w-12 h-12 lg:w-14 lg:h-14 border border-black border-l-0 flex items-center justify-center">
+        <div className="w-12 h-12 lg:w-14 lg:h-14 border border-black border-l-0 flex items-center justify-center bg-white">
           {currentUser ? (
             <Dropdown arrowIcon={false} inline label={<LuUser2 size={20} />}>
               <Dropdown.Header>
