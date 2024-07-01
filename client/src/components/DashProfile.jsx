@@ -207,7 +207,7 @@ export default function DashProfile() {
           <Link to="/create-post">
             <button
               type="button"
-              className=" text-black border border-black w-full py-3 rounded-md transition hover:bg-black hover:text-white"
+              className="bg-white text-black border border-black w-full py-3 rounded-md transition hover:bg-black hover:text-white"
             >
               News 작성하기
             </button>

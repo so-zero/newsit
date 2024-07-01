@@ -63,9 +63,14 @@ export default function Description() {
           </div>
         </div>
       </div>
-      <div className="bg-primary">
+      <div className="bg-orange-400">
         <div className="flex items-center gap-5 justify-center py-10">
-          <Link className="text-xl">어플 다운로드하기</Link>
+          <Link
+            to="/application"
+            className="text-xl transition hover:font-bold"
+          >
+            어플 다운로드하기
+          </Link>
           <BsArrowRight size={30} />
         </div>
       </div>

@@ -74,12 +74,11 @@ export default function Comment({ comment, onEdit, onDelete }) {
           <>
             <Textarea
               className="mb-2"
-              color="base"
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
             />
             <div className="flex justify-end gap-2 text-xs items-center">
-              <Button type="button" size="sm" color="blue" onClick={handleSave}>
+              <Button type="button" size="sm" onClick={handleSave}>
                 저장
               </Button>
               <Button
@@ -102,7 +101,7 @@ export default function Comment({ comment, onEdit, onDelete }) {
                     <button
                       type="button"
                       onClick={handleEdit}
-                      className="text-gray-400 transition hover:text-blue-500 text-xs"
+                      className="text-gray-400 transition hover:text-cyan-500 text-xs"
                     >
                       수정
                     </button>

@@ -69,7 +69,7 @@ export default function DashAdmin() {
   return (
     <div className="p-3 md:mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div className="flex flex-col p-3 gap-4 md:w-72 w-full rounded-md shadow-md">
+        <div className="flex flex-col p-3 gap-4 md:w-72 w-full rounded-md shadow-md bg-white">
           <div className="flex justify-between">
             <div>
               <h3 className="text-gray-500 text-md">총 사용자</h3>
@@ -85,7 +85,7 @@ export default function DashAdmin() {
             <div className="text-gray-500">지난 달</div>
           </div>
         </div>
-        <div className="flex flex-col p-3 gap-4 md:w-72 w-full rounded-md shadow-md">
+        <div className="flex flex-col p-3 gap-4 md:w-72 w-full rounded-md shadow-md bg-white">
           <div className="flex justify-between">
             <div>
               <h3 className="text-gray-500 text-md">총 게시글</h3>
@@ -101,8 +101,8 @@ export default function DashAdmin() {
             <div className="text-gray-500">지난 달</div>
           </div>
         </div>
-        <div className="flex flex-col p-3 gap-4 md:w-72 w-full rounded-md shadow-md">
-          <div className="flex justify-between">
+        <div className="flex flex-col p-3 gap-4 md:w-72 w-full rounded-md shadow-md bg-white">
+          <div className="flex justify-between ">
             <div>
               <h3 className="text-gray-500 text-md">총 댓글수</h3>
               <p className="text-2xl">{totalComments}</p>
@@ -119,7 +119,7 @@ export default function DashAdmin() {
         </div>
       </div>
       <div className="flex flex-wrap gap-3 py-3 mx-auto justify-center">
-        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md">
+        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md bg-white">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className="text-center p-2">사용자</h1>
             <button className="bg-sky-400 text-white py-2 px-4 rounded-md hover:bg-sky-500 transition">
@@ -142,7 +142,7 @@ export default function DashAdmin() {
               ))}
           </Table>
         </div>
-        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md">
+        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md bg-white">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className="text-center p-2">게시글</h1>
             <button className="bg-blue-400 text-white py-2 px-4 rounded-md hover:bg-blue-500 transition">
@@ -167,7 +167,7 @@ export default function DashAdmin() {
               ))}
           </Table>
         </div>
-        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md">
+        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md bg-white">
           <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className="text-center p-2">댓글</h1>
             <button className="bg-indigo-400 text-white py-2 px-4 rounded-md hover:bg-indigo-500 transition">

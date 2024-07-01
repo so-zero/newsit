@@ -3,11 +3,16 @@
 @tailwind utilities;
 
 body {
-  height: 100vh;
+  @apply h-[100vh] bg-background font-body;
+}
+
+.ql-toolbar {
+  background: white;
 }
 
 .ql-editor {
   font-size: 1.1rem;
+  background: white;
 }
 
 .post-content p {

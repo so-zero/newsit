@@ -142,7 +142,6 @@ export default function CommentList({ postId }) {
             placeholder="댓글을 입력해주세요."
             rows="4"
             maxLength="200"
-            color="base"
             onChange={(e) => setComment(e.target.value)}
             value={comment}
           />

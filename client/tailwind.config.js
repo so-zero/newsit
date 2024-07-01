@@ -10,8 +10,7 @@ export default {
         body: ['"Noto Sans KR"', "sans-serif"],
       },
       colors: {
-        background: "#fff",
-        primary: "#fff",
+        background: "#F4F1E8",
       },
       lineHeight: {
         12: "3rem",
