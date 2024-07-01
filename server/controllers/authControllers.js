@@ -79,7 +79,23 @@ async function login(req, res, next) {
   }
 }
 
+// Newsletter
+async function newsletter(req, res, next) {
+  try {
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return next(new HttpError("모든 필드를 입력해 주세요.", 400));
+    }
+
+    res.status(201).json({ name, email });
+  } catch (error) {
+    return next(new HttpError(error));
+  }
+}
+
 module.exports = {
   register,
   login,
+  newsletter,
 };
