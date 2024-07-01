@@ -88,7 +88,7 @@ export default function Banner() {
               뉴스레터 무료로 구독하기
             </button>
             <Link
-              type="submit"
+              to="application"
               className="flex justify-center items-center text-center border-2 border-black rounded-lg bg-black text-white py-3 px-5 transition hover:-translate-y-2 hover:shadow-[5px_5px_0px_0px_rgba(100,100,100)]"
             >
               <p>앱 다운로드하기</p>
