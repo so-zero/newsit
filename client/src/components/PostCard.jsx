@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function PostCard({ post }) {
   return (
-    <div className="border border-black">
+    <div className="border border-black bg-white">
       <Link to={`/post/${post.slug}`}>
         <img
           src={`${import.meta.env.VITE_ASSETS_URL}/uploads/${post?.thumbnail}`}
