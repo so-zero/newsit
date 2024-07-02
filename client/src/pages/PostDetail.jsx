@@ -67,7 +67,7 @@ export default function PostDetail() {
         className="mt-10 p-3 max-h-[500px] w-full object-cover object-center"
       />
       <div
-        className="p-3 mx-auto w-full post-content"
+        className="p-3 mx-auto w-full post-content bg-white"
         dangerouslySetInnerHTML={{ __html: post?.content }}
       ></div>
       <CommentList postId={post._id} />

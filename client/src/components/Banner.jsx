@@ -101,7 +101,7 @@ export default function Banner() {
         <img
           src={imgBanner}
           alt="Banner"
-          className="object-cover h-[400px] mb-6 md:mb-0 md:h-[430px] lg:w-[450px]  md:object-top"
+          className="object-cover h-[400px] mb-6 lg:mb-0 md:h-[430px] lg:w-[450px]  md:object-top"
         />
       </div>
     </section>
